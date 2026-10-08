@@ -1,0 +1,26 @@
+{
+  "name": "my-stack",
+  "version": "0.1.0",
+  "description": "Personal full-stack starter: scaffold a Next.js project with auth, MongoDB, uploads, and protection layers.",
+  "type": "module",
+  "bin": {
+    "my-stack": "bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "template",
+    "docs"
+  ],
+  "keywords": [
+    "nextjs",
+    "starter",
+    "scaffold",
+    "cli",
+    "better-auth",
+    "mongodb"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.18.0"
+  }
+}

@@ -1,0 +1,21 @@
+# Source / tooling
+src/
+docs/
+TODO.md
+*.log
+
+# Env files — never publish
+.env
+.env.local
+.env.*.local
+
+# Build output
+.next/
+dist/
+out/
+coverage/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
