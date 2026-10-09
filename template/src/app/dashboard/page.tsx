@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -19,6 +20,9 @@ export default function DashboardPage() {
 }
 
 async function Dashboard() {
+  // Defer to request time so the build never needs a live MongoDB connection.
+  await connection();
+
   const session = await getCurrentSession();
 
   if (!session) {

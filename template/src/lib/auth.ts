@@ -45,7 +45,13 @@ let authPromise: Promise<Auth> | null = null;
  * process (safe with Next.js hot reload thanks to the module-level cache).
  */
 export function getAuth(): Promise<Auth> {
-  authPromise ??= connectToDatabase().then(() => createAuth(mongoose.connection));
+  authPromise ??= connectToDatabase()
+    .then(() => createAuth(mongoose.connection))
+    .catch((err) => {
+      // Don't cache a rejected promise — allow the next request to retry.
+      authPromise = null;
+      throw err;
+    });
   return authPromise;
 }
 

@@ -72,14 +72,14 @@ Backblaze B2 (S3 API), Arcjet, Cloudflare Turnstile, Zod, env validation.
 
 ## Phase 9: Push to GitHub
 
-- [ ] `git init` and make sure `.env` is NOT tracked (`git status` check)
-- [ ] First commit: `feat: initial stack`
-- [ ] Create the GitHub repo (empty, public or private, no README)
-- [ ] `git branch -M main`
-- [ ] `git remote add origin https://github.com/<USERNAME>/<REPO>.git`
-- [ ] `git push -u origin main`
-- [ ] (Optional) enable **Template repository** in GitHub Settings
-- [ ] (Optional) `npm publish` after checking the package name is free
+- [x] `git init` and make sure `.env` is NOT tracked (`git status` check) — repo pre-inited, only `template/.env.example` tracked
+- [x] First commit: `feat: initial stack`
+- [x] Create the GitHub repo (empty, public or private, no README) — https://github.com/Sabermrddz/stack.git (was already empty)
+- [x] `git branch -M main`
+- [x] `git remote add origin https://github.com/<USERNAME>/<REPO>.git` — origin pre-configured to Sabermrddz/stack
+- [x] `git push -u origin main` — pushed, remote `main` = `86f388c`
+- [x] (Optional, skipped per user) enable **Template repository** in GitHub Settings
+- [x] (Optional, skipped per user) `npm publish` after checking the package name is free
 
 ---
 
@@ -116,9 +116,9 @@ B2_REGION=
 
 ## Definition of done
 
-- [ ] `npx my-stack my-app` creates a working project
+- [x] `npx my-stack my-app` creates a working project — verified as `my-stack test-app` via `npm link` (identical binary; `npx` resolves it once published)
 - [ ] Login with Google and GitHub works
 - [ ] Turnstile blocks form submits without a valid token
 - [ ] Arcjet rate-limits repeated requests
 - [ ] File upload to B2 works
-- [ ] Code is pushed to GitHub with no secrets inside
+- [x] Code is pushed to GitHub with no secrets inside
