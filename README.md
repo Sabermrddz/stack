@@ -5,11 +5,13 @@ with TypeScript, Tailwind, auth, database, uploads, and abuse protection built i
 
 ## Usage
 
+Not published to npm — run it straight from GitHub:
+
 ```bash
-npx my-stack my-app
+npx github:Sabermrddz/stack my-app
 cd my-app
 npm install
-cp .env.example .env   # then fill in the values
+cp .env.example .env   # Windows: copy .env.example .env — then fill in the values
 npm run dev
 ```
 
