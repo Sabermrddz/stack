@@ -1,69 +1,50 @@
-# my-stack
+# my-stack v2
 
-A CLI that scaffolds my personal full-stack starter: a Next.js (App Router) project
-with TypeScript, Tailwind, auth, database, uploads, and abuse protection built in.
-
-## Usage
-
-Not published to npm — run it straight from GitHub:
+A multi-stack Next.js scaffolder. One command, three stacks, all free.
 
 ```bash
-npx github:Sabermrddz/stack my-app
-cd my-app
-npm install
-cp .env.example .env   # Windows: copy .env.example .env — then fill in the values
-npm run dev
+npx my-stack my-app --stack=mongo
+npx my-stack my-app --stack=postgres
+npx my-stack my-app --stack=appwrite
 ```
 
-## What's inside the template
+If `--stack` is omitted, the CLI asks interactively.
 
-- **Next.js** (App Router) + React + TypeScript + Tailwind CSS + ESLint
-- **Better-Auth** — sign in with Google and GitHub (optional email/password), session on `/dashboard`
-- **MongoDB** via Mongoose, with a hot-reload-safe cached connection
-- **Backblaze B2** uploads through presigned S3 URLs
-- **Arcjet** — rate limiting, bot detection, and shield on auth/API routes
-- **Cloudflare Turnstile** — CAPTCHA alternative on public forms
-- **Zod** env validation via `@t3-oss/env-nextjs`
+## Stacks
 
-## Required environment keys
+| Stack | Auth | Database | Storage |
+|-------|------|----------|---------|
+| `mongo` | Better-Auth (email + Google + GitHub) | MongoDB Atlas M0 (Mongoose) | Backblaze B2 |
+| `postgres` | Better-Auth + Drizzle adapter | Neon (PostgreSQL) + Drizzle ORM | Backblaze B2 |
+| `appwrite` | Appwrite Cloud Auth | Appwrite TablesDB | Appwrite Storage |
 
-Copy `.env.example` to `.env` and fill in every value:
+## Common to all stacks
 
-```bash
-# Database
-MONGODB_URI=
+- Next.js 16 (App Router) + TypeScript + Tailwind CSS 4 + ESLint
+- Zod env validation (`@t3-oss/env-nextjs`)
+- Cloudflare Turnstile on all public auth forms
+- Internal rate limiter (no external service) — per-stack adapter
 
-# Better-Auth
-BETTER_AUTH_SECRET=
-BETTER_AUTH_URL=http://localhost:3000
+## Requirements
 
-# OAuth
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
+- Node.js ≥ 20.9.0
 
-# Arcjet
-ARCJET_KEY=
+## Generated project structure
 
-# Cloudflare Turnstile
-NEXT_PUBLIC_TURNSTILE_SITE_KEY=
-TURNSTILE_SECRET_KEY=
-
-# Backblaze B2 (S3 compatible)
-B2_KEY_ID=
-B2_APPLICATION_KEY=
-B2_BUCKET=
-B2_ENDPOINT=
-B2_REGION=
 ```
-
-### Manual setup required
-
-Some keys can only be created by hand — see:
-
-- `docs/CLOUDFLARE.md` — domain, proxy, and Turnstile site setup
-- OAuth apps: create GitHub and Google OAuth clients and paste their IDs/secrets into `.env`
+my-app/
+  src/
+    app/          Next.js App Router pages + API routes
+    lib/          Stack-specific helpers (auth, db, storage)
+    components/   Shared React components
+    db/           Drizzle schema (postgres only)
+    models/       Mongoose models (mongo only)
+    env.ts        Zod env schema (stack-specific)
+    proxy.ts      Next.js middleware
+  docs/           Setup guides for each service
+  .env.example    All required env vars
+  drizzle.config.ts  (postgres only)
+```
 
 ## License
 

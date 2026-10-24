@@ -1,13 +1,5 @@
-node_modules/
-.env
-.env.local
-.env.*.local
-.next/
-dist/
-out/
-build/
-coverage/
+.git
+.gitignore
+node_modules
 *.log
 .DS_Store
-*.tsbuildinfo
-next-env.d.ts

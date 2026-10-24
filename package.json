@@ -1,7 +1,7 @@
 {
   "name": "my-stack",
-  "version": "0.1.0",
-  "description": "Personal full-stack starter: scaffold a Next.js project with auth, MongoDB, uploads, and protection layers.",
+  "version": "2.0.0",
+  "description": "Multi-stack Next.js scaffolder: mongo | postgres | appwrite — all free, all composable.",
   "type": "module",
   "bin": {
     "my-stack": "bin/cli.js"
@@ -17,7 +17,11 @@
     "scaffold",
     "cli",
     "better-auth",
-    "mongodb"
+    "mongodb",
+    "postgres",
+    "drizzle",
+    "appwrite",
+    "neon"
   ],
   "license": "MIT",
   "engines": {

@@ -1,21 +1,8 @@
-# Source / tooling
-src/
-docs/
-TODO.md
+# Files to exclude from the npm package
+.git
+.gitignore
+node_modules
 *.log
-
-# Env files — never publish
-.env
-.env.local
-.env.*.local
-
-# Build output
-.next/
-dist/
-out/
-coverage/
-
-# OS / editor
 .DS_Store
-.vscode/
-.idea/
+
+# Keep only bin/, template/, docs/ (listed in package.json "files")
