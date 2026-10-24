@@ -586,6 +586,7 @@ Before using v2 in production, test each stack with real accounts:
 
 6. **Test CLI Locally**
    ```bash
+   # Test by running directly from the repo
    node bin\cli.js test-all-stacks-final --stack=mongo
    cd test-all-stacks-final
    npm install
@@ -594,33 +595,39 @@ Before using v2 in production, test each stack with real accounts:
    Remove-Item -Recurse test-all-stacks-final
    ```
 
-7. **Update Version and Publish**
-   ```bash
-   # In root package.json, bump version to 2.0.0
-   npm publish
-   ```
-
-8. **Commit and Push**
+7. **Commit and Push** (✅ COMPLETED)
    ```bash
    git add .
    git commit -m "Release v2: Multi-stack scaffolder (mongo/postgres/appwrite)"
    git push origin release-v2
    ```
 
-9. **Create Pull Request**
-   - Open PR: release-v2 → main
-   - Add description linking to this DONE.md
-   - Merge when approved
+8. **Merge to Main** (✅ COMPLETED)
+   ```bash
+   git checkout main
+   git merge release-v2
+   git push origin main
+   ```
 
-10. **Tag Release**
-    ```bash
-    git checkout main
-    git pull origin main
-    git tag -a v2.0.0 -m "Version 2.0.0: Multi-stack support"
-    git push origin v2.0.0
-    ```
+9. **Tag Release** (✅ COMPLETED)
+   ```bash
+   git tag -a v2.0.0 -m "Version 2.0.0: Multi-stack support"
+   git push origin v2.0.0
+   ```
 
-11. **Cleanup Test Directories**
+## How to Use (No npm Installation)
+
+Users can run the CLI directly from GitHub using npx:
+
+```bash
+npx github:Sabermrddz/stack my-app --stack=mongo
+npx github:Sabermrddz/stack my-app --stack=postgres
+npx github:Sabermrddz/stack my-app --stack=appwrite
+```
+
+No need to publish to npm! The `bin/cli.js` in your repo will be executed directly.
+
+10. **Cleanup Test Directories** (Optional - local only)
     ```bash
     Remove-Item -Recurse test-mongo-v2, test-postgres-v2, test-appwrite-v2, test-mongo-final, test-postgres-final, test-appwrite-final
     ```

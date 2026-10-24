@@ -3,12 +3,14 @@
 A multi-stack Next.js scaffolder. One command, three stacks, all free.
 
 ```bash
-npx my-stack my-app --stack=mongo
-npx my-stack my-app --stack=postgres
-npx my-stack my-app --stack=appwrite
+npx github:Sabermrddz/stack my-app --stack=mongo
+npx github:Sabermrddz/stack my-app --stack=postgres
+npx github:Sabermrddz/stack my-app --stack=appwrite
 ```
 
 If `--stack` is omitted, the CLI asks interactively.
+
+> **Note:** This scaffolder runs directly from GitHub. No npm installation required!
 
 ## Stacks
 
