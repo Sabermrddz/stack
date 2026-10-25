@@ -44,8 +44,8 @@ No secrets belong in git — put values in `.env`.
 3. Create a **Table** inside it for rate limiting:
    - **Table ID**: `rate_limits`
    - **Columns**:
-     | Attribute | Type    | Required | Default |
-     |-----------|---------|----------|---------|
+     | Column | Type    | Required | Default |
+     |--------|---------|----------|---------|
      | `rl_key`  | String  | Yes      | —       |
      | `count`   | Integer | Yes      | 0       |
      | `expires_at` | Integer | Yes   | —       |
@@ -84,16 +84,19 @@ Open `/login`, sign up / sign in, land on `/dashboard`, try an upload.
 
 ## Free tier notes
 
-- **Appwrite Cloud free**: 75,000 monthly active users, 2 GB storage,
-  5 GB bandwidth/month, unlimited databases and tables
+- **Appwrite Cloud Free**: 75,000 monthly active users, 2 GB storage,
+  5 GB bandwidth/month, 1 TablesDB database and 1 Storage bucket per project
 - Projects are **paused after 1 week of inactivity** — re-activate in the console
 - No credit card required
 
-> **Unverified**: Free tier limits are subject to change. Check
-> <https://appwrite.io/pricing> for current limits.
+> The exact monthly active user counting rules and any separate TablesDB row
+> or compute quotas were not verified. Check <https://appwrite.io/pricing> for
+> current limits.
 
 ## Session cookie details
 
-The app uses an HTTP-only cookie named `a_session_<project-id-lowercase>`.
-This is set by the sign-in server action and read by the proxy to guard
-protected routes.
+The app uses an HTTP-only cookie named `a_session_<project-id>`. The sign-in
+server action stores the session secret and expiration in this cookie. The
+proxy checks that cookie as an early route guard; server components and server
+actions read it through `createSessionClient()`, which calls `setSession()` on
+a per-request Appwrite client before making user-scoped API calls.

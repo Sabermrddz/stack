@@ -41,10 +41,10 @@ export async function signInAction(
 
   try {
     const { account } = await createAdminClient();
-    const session = await account.createEmailPasswordSession(
-      parsed.data.email,
-      parsed.data.password,
-    );
+    const session = await account.createEmailPasswordSession({
+      email: parsed.data.email,
+      password: parsed.data.password,
+    });
 
     (await cookies()).set(SESSION_COOKIE, session.secret, {
       path: "/",
@@ -84,16 +84,16 @@ export async function signUpAction(
 
   try {
     const { account } = await createAdminClient();
-    await account.create(
-      ID.unique(),
-      parsed.data.email,
-      parsed.data.password,
-      parsed.data.name,
-    );
-    const session = await account.createEmailPasswordSession(
-      parsed.data.email,
-      parsed.data.password,
-    );
+    await account.create({
+      userId: ID.unique(),
+      email: parsed.data.email,
+      password: parsed.data.password,
+      name: parsed.data.name,
+    });
+    const session = await account.createEmailPasswordSession({
+      email: parsed.data.email,
+      password: parsed.data.password,
+    });
 
     (await cookies()).set(SESSION_COOKIE, session.secret, {
       path: "/",
@@ -124,6 +124,8 @@ export async function signOutAction(): Promise<void> {
   (await cookies()).set(SESSION_COOKIE, "", {
     path: "/",
     httpOnly: true,
+    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production",
     expires: new Date(0),
   });
 

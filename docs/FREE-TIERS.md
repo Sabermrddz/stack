@@ -1,104 +1,108 @@
 # Free-tier service limits
 
-A reference for the services used in each stack. All are free with no
-time limit unless noted. Check the linked pricing pages for current limits
-before going to production — limits change.
+Limits below were checked against each provider's official pricing or product
+documentation on 2026-10-24. Providers can change their plans; follow the linked
+source for current terms before launch.
 
-## Cloudflare (all stacks)
+## Cloudflare Turnstile (all stacks)
 
-| Service   | Limit | Notes |
-|-----------|-------|-------|
-| Turnstile | Unlimited | Always free, no API calls counted |
-| Free plan | 1 site | Shared SSL, basic DDoS, 3 Page Rules |
+| Free-plan limit | Value |
+|---|---:|
+| Widgets per account | Up to 20 |
+| Hostnames per widget | Up to 10 |
+| Challenges / verification requests | Unlimited |
 
-Reference: <https://www.cloudflare.com/plans/>
-
----
+Source: [Turnstile plans](https://developers.cloudflare.com/turnstile/plans/).
 
 ## Mongo stack
 
-### MongoDB Atlas M0
+### MongoDB Atlas Free cluster (formerly M0)
 
-| Resource  | Limit |
-|-----------|-------|
-| Storage   | 512 MB shared |
-| Connections | 500 |
-| RAM       | 512 MB shared |
-| Regions   | AWS, GCP, Azure (1 cluster) |
+| Limit | Value |
+|---|---:|
+| Data storage | 0.5 GB |
+| Concurrent connections | Up to 500 |
+| Databases per cluster | Up to 100 |
+| Collections per cluster | Up to 500 |
+| Data transfer | 10 GB in and 10 GB out per rolling 7-day period |
+| Throughput | Up to 100 operations per second |
 
-- **No time limit** — M0 is permanently free.
-- Backups disabled on M0. Export data periodically if needed.
-- Reference: <https://www.mongodb.com/pricing>
+Atlas permits one Free cluster per project. Free clusters can automatically
+pause after 30 days with no connections. Backups can be enabled; up to four
+daily snapshots are retained when enabled. The current docs do not publish RAM
+as a configurable Free-cluster allocation, so no RAM figure is claimed here.
+
+Source: [Atlas Free cluster limits](https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/).
 
 ### Backblaze B2
 
-| Resource        | Limit |
-|-----------------|-------|
-| Storage         | 10 GB/month free |
-| Download (CDN)  | 1 GB/day free |
-| Class A/B ops   | 2,500/2,500 free per day |
+| Limit | Value |
+|---|---:|
+| Storage | First 10 GB free |
+| Egress | Free up to 3x average monthly stored data; partner egress may be unlimited |
+| Class A, B, C API calls | Free |
+| Class D API calls | First 2,500 per day free, then billed |
 
-- Pay-as-you-go above the free threshold ($0.006/GB storage).
-- Free egress to Cloudflare partners (CDN routing via Cloudflare).
-- Reference: <https://www.backblaze.com/b2/b2-pricing.html>
+The project uses S3-compatible B2. Uploads have no data-transfer charge. Above
+the included storage and egress limits, usage is billed. The old claim of 1 GB
+free downloads per day and daily Class A/B quotas is not current.
 
----
+Sources: [B2 pricing](https://www.backblaze.com/cloud-storage/pricing),
+[transaction pricing](https://www.backblaze.com/cloud-storage/transaction-pricing).
 
 ## Postgres stack
 
-### Neon (PostgreSQL)
+### Neon Free
 
-| Resource        | Limit |
-|-----------------|-------|
-| Projects        | 1 |
-| Storage         | 0.5 GB |
-| Compute hours   | 190/month |
-| Branches        | 10 |
+| Limit | Value |
+|---|---:|
+| Projects | 100 |
+| Branches | 10 per project |
+| Compute | 100 CU-hours per project per month |
+| PostgreSQL storage | 1 GB per project, 20 GB total per account |
+| Public network transfer | 5 GB per project |
 
-- Compute scales to zero when idle (cold-start ~1 s).
-- **No time limit** — free tier does not expire.
-- Reference: <https://neon.tech/pricing>
+Free plan has no time limit and scales to zero after five minutes inactive.
+The former documentation's 1-project, 0.5-GB and 190-compute-hour values are
+outdated.
 
-> **Unverified**: The exact compute-hours ceiling and whether the 190 h/month
-> limit resets per calendar month or rolling 30 days could not be confirmed from
-> docs at build time. Verify at the link above.
+Source: [Neon plans](https://neon.com/docs/introduction/plans).
 
-### Backblaze B2 — same as mongo stack above.
+### Backblaze B2
 
----
+See the Mongo stack's [Backblaze B2 limits](#backblaze-b2).
 
 ## Appwrite stack
 
-### Appwrite Cloud (free tier)
+### Appwrite Cloud Free
 
-| Resource        | Limit |
-|-----------------|-------|
+| Limit | Value |
+|---|---:|
+| Projects | 2 per Free organization |
+| TablesDB databases | 1 per project |
+| Storage buckets | 1 per project |
 | Monthly active users | 75,000 |
-| Storage         | 2 GB |
-| Bandwidth       | 5 GB/month |
-| Executions (Functions) | 750,000 |
-| Databases       | Unlimited |
-| Projects        | Unlimited |
+| Storage | 2 GB |
+| Bandwidth | 5 GB per month |
+| Function executions | 750,000 per month |
+| Functions | 2 per project |
 
-- Projects **paused after 1 week of inactivity** — re-activate in the console.
-- No credit card required.
-- Reference: <https://appwrite.io/pricing>
+Free projects pause after one week of inactivity. The exact monthly active
+user counting rules, and the separate row/compute quotas that may apply to
+TablesDB, were not verified in the available official documentation. Review
+the current plan comparison before relying on those limits.
 
-> **Unverified**: The exact definition of "monthly active user" (MAU) in Appwrite's
-> billing and whether TablesDB write operations count separately could not be
-> confirmed. Verify at the link above before high-traffic deployment.
+Sources: [Appwrite pricing](https://appwrite.io/pricing),
+[Free plan documentation](https://appwrite.io/docs/advanced/billing/free).
 
----
+## Internal rate limiter
 
-## Internal rate limiter (all stacks)
+The scaffolder includes a database-backed internal rate limiter for additional
+sensitive application endpoints. Better Auth routes use Better Auth's own
+built-in rate limiter and its configured database storage.
 
-The rate limiter is fully in-process — no external service, no billing.
-
-| Stack    | Storage backend | Cleanup |
-|----------|-----------------|---------|
-| mongo    | `rate_limits` collection | MongoDB TTL index (automatic) |
-| postgres | `rate_limits` table | Lazy delete per-key on each request |
-| appwrite | `rate_limits` TablesDB table | Lazy delete per-key on each request |
-
-Better-Auth's built-in rate limiter (for `/sign-in/email`, `/sign-up/email`,
-`/forget-password`) uses the same primary database adapter — no separate store.
+| Stack | Internal limiter storage | Cleanup |
+|---|---|---|
+| mongo | `rate_limits` MongoDB collection | MongoDB TTL index |
+| postgres | `rate_limits` PostgreSQL table | Lazy deletion per key |
+| appwrite | `rate_limits` TablesDB table | Lazy deletion per key |

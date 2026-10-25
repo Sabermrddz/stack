@@ -19,7 +19,7 @@ const ENDPOINT =
 const PROJECT = process.env.NEXT_PUBLIC_APPWRITE_PROJECT ?? "";
 const API_KEY = process.env.APPWRITE_API_KEY ?? "";
 
-export const SESSION_COOKIE = `a_session_${PROJECT.toLowerCase()}`;
+export const SESSION_COOKIE = `a_session_${PROJECT}`;
 
 // ── Admin client (server-side, uses API key) ──────────────────────────────────
 

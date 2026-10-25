@@ -158,8 +158,9 @@ async function mergeFiles(overlayName, targetDir) {
     await writeFile(targetEnvPath, mergeEnvExample(base, overlay));
   }
 
-  // env.ts: copied wholesale by cp() — the last overlay wins.
-  // No append needed; each stack overlay ships a complete standalone env.ts.
+  // env.ts is copied with each overlay. For supported stacks, the database
+  // overlay (Mongo/Postgres) or backend overlay (Appwrite) provides the final
+  // complete stack-specific env schema. Verify this when changing layer order.
 }
 
 // ─── per-stack composition ───────────────────────────────────────────────────
@@ -188,6 +189,18 @@ const STACK_LAYERS = {
     { overlay: "backend-appwrite" },
     { overlay: "rate-limit-appwrite" },
   ],
+};
+
+const STACK_DOCS = {
+  mongo: ["OAUTH.md", "CLOUDFLARE.md", "BACKBLAZE.md", "FREE-TIERS.md"],
+  postgres: [
+    "OAUTH.md",
+    "CLOUDFLARE.md",
+    "BACKBLAZE.md",
+    "POSTGRES.md",
+    "FREE-TIERS.md",
+  ],
+  appwrite: ["APPWRITE.md", "CLOUDFLARE.md", "FREE-TIERS.md"],
 };
 
 // ─── next-steps text ─────────────────────────────────────────────────────────
@@ -250,9 +263,9 @@ Scaffolded by **my-stack v2**.
 See \`docs/\` for step-by-step guides for each service.
 
 ## Free tier notes
-- MongoDB Atlas M0: 512 MB storage, shared cluster, no time limit
-- Backblaze B2: first 10 GB storage + 1 GB/day download free
-- Cloudflare Turnstile: unlimited, always free
+- MongoDB Atlas Free: 0.5 GB storage; see docs/FREE-TIERS.md for current limits
+- Backblaze B2: first 10 GB storage and egress up to 3x average storage free
+- Cloudflare Turnstile Free: up to 20 widgets, 10 hostnames per widget, and unlimited challenges
 `,
   postgres: `# {{PROJECT_NAME}} — postgres stack
 
@@ -292,9 +305,9 @@ npm run db:migrate    # apply migrations against DATABASE_URL_UNPOOLED
 See \`docs/\` for step-by-step guides for each service.
 
 ## Free tier notes
-- Neon free: 0.5 GB storage, 190 compute hours/month, 1 project
-- Backblaze B2: first 10 GB storage + 1 GB/day download free
-- Cloudflare Turnstile: unlimited, always free
+- Neon Free: 1 GB storage and 100 CU-hours/month per project
+- Backblaze B2: first 10 GB storage and egress up to 3x average storage free
+- Cloudflare Turnstile Free: up to 20 widgets, 10 hostnames per widget, and unlimited challenges
 `,
   appwrite: `# {{PROJECT_NAME}} — appwrite stack
 
@@ -303,7 +316,7 @@ Scaffolded by **my-stack v2**.
 ## Stack
 - Next.js 16 (App Router) + TypeScript + Tailwind CSS 4
 - **Appwrite Cloud** for auth (email/password + OAuth), TablesDB, and Storage
-- Internal rate limiter (lazy-cleanup Appwrite Storage counters)
+- Internal rate limiter for additional sensitive routes (Appwrite TablesDB rows)
 - Cloudflare Turnstile on public forms
 
 ## Env keys
@@ -322,9 +335,9 @@ Scaffolded by **my-stack v2**.
 See \`docs/APPWRITE.md\` and \`docs/CLOUDFLARE.md\` for step-by-step guides.
 
 ## Free tier notes
-- Appwrite Cloud free: 2 GB storage, 5 GB bandwidth/month, unlimited auth
+- Appwrite Cloud Free: 75,000 monthly active users, 2 GB storage, 5 GB bandwidth/month, 1 TablesDB database and 1 Storage bucket per project
 - Projects paused after 1 week of inactivity — re-activate in console
-- Cloudflare Turnstile: unlimited, always free
+- Cloudflare Turnstile Free: up to 20 widgets, 10 hostnames per widget, and unlimited challenges
 `,
 };
 
@@ -463,12 +476,13 @@ async function main() {
   );
   await writeFile(path.join(targetDir, "README.md"), readme);
 
-  // 6. Copy docs
+  // 6. Copy only the docs relevant to this stack
   if (await exists(DOCS_DIR)) {
-    await cp(DOCS_DIR, path.join(targetDir, "docs"), {
-      recursive: true,
-      filter: cpFilter,
-    });
+    const targetDocsDir = path.join(targetDir, "docs");
+    await mkdir(targetDocsDir, { recursive: true });
+    for (const doc of STACK_DOCS[stack]) {
+      await cp(path.join(DOCS_DIR, doc), path.join(targetDocsDir, doc));
+    }
   }
 
   console.log(nextStepsText(projectName, stack));

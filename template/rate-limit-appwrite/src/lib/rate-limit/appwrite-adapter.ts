@@ -14,6 +14,7 @@
  */
 
 import type { RateLimitAdapter, RateLimitResult } from "./adapter";
+import { Query } from "node-appwrite";
 
 // Appwrite SDK types — imported lazily so Next.js tree-shaking works
 type AppwriteTablesDB = {
@@ -43,9 +44,6 @@ type AppwriteTablesDB = {
 };
 
 const TABLE_ID = "rate_limits";
-const QUERY_EQUAL = (attr: string, val: string) =>
-  `equal("${attr}", "${val}")`;
-
 export class AppwriteRateLimitAdapter implements RateLimitAdapter {
   constructor(
     private readonly tablesDb: AppwriteTablesDB,
@@ -67,7 +65,7 @@ export class AppwriteRateLimitAdapter implements RateLimitAdapter {
     const { rows } = await this.tablesDb.listRows({
       databaseId: this.databaseId,
       tableId: TABLE_ID,
-      queries: [QUERY_EQUAL("rl_key", key)],
+      queries: [Query.equal("rl_key", key)],
     });
 
     const existing = rows[0];
