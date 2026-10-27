@@ -1,4 +1,4 @@
-# my-stack v2
+
 
 A multi-stack Next.js scaffolder. One command, three stacks, all free.
 
